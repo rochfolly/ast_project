@@ -1,0 +1,15 @@
+{
+  "name": "ast_project",
+  "version": "1.0.0",
+  "description": "Asynchronous Server Technologies Final Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "roch folly",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^1.18.8",
+    "typescript": "^3.2.2"
+  }
+}
