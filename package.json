@@ -9,6 +9,7 @@
   "author": "roch folly",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.4",
     "nodemon": "^1.18.8",
     "typescript": "^3.2.2"
   }
