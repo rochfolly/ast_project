@@ -9,7 +9,14 @@
   "author": "roch folly",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4",
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/node": "^10.12.14",
+    "concurrently": "^4.1.0",
     "nodemon": "^1.18.8",
     "typescript": "^3.2.2"
   }
