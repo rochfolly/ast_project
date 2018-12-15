@@ -1,9 +1,19 @@
-const express = require('express');
-const app = express();
-const bodyparser = require('body-parser')
+import express = require('express');
+import bodyparser = require('body-parser')
+import morgan = require('morgan')
+import session = require('express-session')
+import levelSession = require('level-session-store')
 
-import { MetricsHandler, Metric } from './metrics';
+const app = express();
+const authRouter = express.Router()
+const LevelStore = levelSession(session)
+
+
+import { MetricsHandler, Metric } from './metrics'
 const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
+
+import { UserHandler, User } from './users'
+const dbUser: UserHandler = new UserHandler('./db/users')
 
 //Templates
 app.set('view engine', 'ejs')
@@ -15,6 +25,32 @@ app.use(express.static('public'))
 //Clarification des requêtes
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({ extended: true }))
+
+//Sessions et Logging
+app.use(morgan('dev'))
+
+app.use(session({
+  secret: 'my very secret phrase',
+  store: new LevelStore('./db/sessions'),
+  resave: true,
+  saveUninitialized: true
+}))
+
+
+
+authRouter.get('/login', (req: any, res: any) => {
+  res.render('login')
+})
+
+authRouter.get('/signup', (req: any, res: any) => {
+  res.render('signup')
+})
+
+authRouter.get('/logout', (req: any, res: any) => {
+  delete req.session.loggedIn
+  delete req.session.user
+  res.redirect('/login')
+})
 
 
 app.get('/', (req: any, res: any) => {
