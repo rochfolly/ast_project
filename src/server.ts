@@ -1,8 +1,7 @@
 import express = require('express');
 const app = express();
 const authRouter = express.Router()
-
-
+//import path = require('path')
 
 import { MetricsHandler, Metric } from './metrics'
 const dbMet: MetricsHandler = new MetricsHandler('./db/metrics')
@@ -117,18 +116,50 @@ userRouter.get('/:username', (req: any, res: any, next: any) => {
 app.use('/user', userRouter)
 
 
-app.get('/metrics/:id', (req: any, res: any) => {
-  dbMet.get(req.params.id, (err: Error | null, result?: any) => {
-    if (err) {
-      throw err
-    }
-		else if(!result){
-			res.send('Aucun résultat')
-			res.end()
-		}
-    else res.json(result)
+
+///Metrics
+const metricsRouter = express.Router()
+
+metricsRouter.post('/', (req: any, res: any, next: any) => {
+  const met = [new Metric(`${new Date(req.body.timestamp)}`, req.body.value)]
+  dbMet.save(req.session.user.username, met, (err: Error | null) => {
+    if (err) next(err)
+    res.status(200).send()
+    console.log('Metric ajouté')
   })
+  if(req.body.value){
+    res.render('home', {success : "Metric ajouté avec succès", name : req.session.user.username})
+  }
+  else res.render('home', {name : req.session.user.username})
 })
+
+
+metricsRouter.get('/add', (req:any, res: any) =>{
+  res.render('add', {name : req.session.user.username})
+})
+
+/*metricsRouter.get('/', (req:any, res: any) =>{
+  res.redirect('/metrics/'+req.session.user.username)
+})*/
+
+
+metricsRouter.get('/:id', (req: any, res: any) => {
+  if(req.params.id === req.session.user.username){
+    dbMet.get(req.params.id, (err: Error | null, result?: any) => {
+      if (err) {
+        throw err
+      }
+		  else if(!result){
+			  res.send('Aucun résultat')
+			  res.end()
+	  	}
+     else res.json(result)
+     })
+    }
+  else res.send("Vous n'avez pas accès à ces metrics")
+})
+
+app.use('/metrics', metricsRouter)
 
 app.listen(4000, (err: Error) => {
 	if (err) throw err

@@ -24,9 +24,9 @@ class MetricsHandler {
             callback(null, met);
         });
         stream.on('data', (data) => {
-            const [_, k, timestamp] = data.key.split(":");
+            const [, k, timestamp] = data.key.split(":");
             const value = data.value;
-            if (key != k) {
+            if (key !== k) {
                 console.log(`LevelDB error: ${data} does not match key ${key}`);
             }
             else {
@@ -39,7 +39,7 @@ class MetricsHandler {
         stream.on('error', callback);
         stream.on('close', callback);
         metrics.forEach(m => {
-            stream.write({ key: `metric:${key}${m.timestamp}`, value: m.value });
+            stream.write({ key: `metric:${key}:${m.timestamp}`, value: m.value });
         });
         stream.end();
     }

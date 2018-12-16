@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const app = express();
 const authRouter = express.Router();
+//import path = require('path')
 const metrics_1 = require("./metrics");
 const dbMet = new metrics_1.MetricsHandler('./db/metrics');
 const users_1 = require("./users");
@@ -50,7 +51,7 @@ authRouter.post('/login', (req, res, next) => {
         else {
             req.session.loggedIn = true;
             req.session.user = result;
-            console.log('else error');
+            console.log('Connexion réussie');
             res.redirect('/');
         }
     });
@@ -96,19 +97,46 @@ userRouter.get('/:username', (req, res, next) => {
     });
 });
 app.use('/user', userRouter);
-app.get('/metrics/:id', (req, res) => {
-    dbMet.get(req.params.id, (err, result) => {
-        if (err) {
-            throw err;
-        }
-        else if (!result) {
-            res.send('Aucun résultat');
-            res.end();
-        }
-        else
-            res.json(result);
+///Metrics
+const metricsRouter = express.Router();
+metricsRouter.post('/', (req, res, next) => {
+    const met = [new metrics_1.Metric(`${new Date(req.body.timestamp)}`, req.body.value)];
+    dbMet.save(req.session.user.username, met, (err) => {
+        if (err)
+            next(err);
+        res.status(200).send();
+        console.log('Metric ajouté');
     });
+    if (req.body.value) {
+        res.render('home', { success: "Metric ajouté avec succès", name: req.session.user.username });
+    }
+    else
+        res.render('home', { name: req.session.user.username });
 });
+metricsRouter.get('/add', (req, res) => {
+    res.render('add', { name: req.session.user.username });
+});
+/*metricsRouter.get('/', (req:any, res: any) =>{
+  res.redirect('/metrics/'+req.session.user.username)
+})*/
+metricsRouter.get('/:id', (req, res) => {
+    if (req.params.id === req.session.user.username) {
+        dbMet.get(req.params.id, (err, result) => {
+            if (err) {
+                throw err;
+            }
+            else if (!result) {
+                res.send('Aucun résultat');
+                res.end();
+            }
+            else
+                res.json(result);
+        });
+    }
+    else
+        res.send("Vous n'avez pas accès à ces metrics");
+});
+app.use('/metrics', metricsRouter);
 app.listen(4000, (err) => {
     if (err)
         throw err;

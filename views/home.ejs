@@ -18,10 +18,30 @@
 
 
 <div class="ui main container">
-   <button class="positive ui button" href="" onClick='document.location.href=" "'>Afficher les metrics</button>
-   <button class="small ui button" href="" onClick='document.location.href=" "'>Ajouter metrics</button>
+  <% if(locals.success){ %>
+     <div class="ui positive message">
+                <%= success %>
+     </div>
+     <% } %>
+
+   <button class="ui teal button" id="show-metrics">Afficher les metrics</button>
+   <button class="small ui button" href="metrics/add" onClick='document.location.href="metrics/add"'>Ajouter metrics</button>
+
+   <div id="metrics"></div>
 
 </div>
 </body>
+
+<script>
+  $('#show-metrics').click((e) => {
+    e.preventDefault()
+    $.getJSON('/metrics.json', {}, (data) => {
+      const content = data.map(d => {
+        return `<p>timestamp: ${d.timestamp}, value: ${d.value}</p>`
+      })
+      $("#metrics").append(content.join("\n"))
+    })
+  })
+</script>
 
 </html>
