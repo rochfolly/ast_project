@@ -137,13 +137,13 @@ metricsRouter.get('/:id', (req, res) => {
     else
         res.send("Vous n'avez pas accès à ces metrics");
 });
-const display = function (req, res, next) {
-    if (req.session.loggedIn) {
-        next();
-    }
-    else
-        res.redirect('/login');
-};
+metricsRouter.get('delete/:timestamp', (req, res) => {
+    dbMet.remove(req.session.user.username, req.params.timestamp, (err) => {
+        if (err)
+            throw err;
+        res.status(200).send();
+    });
+});
 app.use('/metrics', authCheck, metricsRouter);
 //Script de home.ejs
 app.get('/metrics.json', (req, res, next) => {

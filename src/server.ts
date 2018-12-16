@@ -161,12 +161,14 @@ metricsRouter.get('/:id', (req: any, res: any) => {
   else res.send("Vous n'avez pas accès à ces metrics")
 })
 
-const display = function (req: any, res: any, next: any) {
-  if (req.session.loggedIn) {
-    next()
-  } else res.redirect('/login')
-}
 
+metricsRouter.get('delete/:timestamp', (req: any, res: any) => {
+  console.log('Suppression')
+  dbMet.remove(req.session.user.username, req.params.timestamp, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send()
+  })
+})
 
 
 app.use('/metrics', authCheck, metricsRouter)

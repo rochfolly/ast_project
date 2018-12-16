@@ -52,14 +52,14 @@ export class MetricsHandler {
     stream.end()
   }
 
-  public remove(key: string, callback: (error: Error | null) => void) {
+  public remove(key: string, tsp: string, callback: (error: Error | null) => void) {
     const stream = this.db.createReadStream()
 
     stream.on('error', (err:Error) => callback(err))
     stream.on('end', () => callback(null))
     stream.on('data', (data:any) => {
         const [ , k, timestamp] = data.key.split(":")
-        if (key === k) this.db.del(data.key)
+        if ((key === k) && (tsp === timestamp)) this.db.del(data.key)
       })
   }
 

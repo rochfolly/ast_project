@@ -43,13 +43,13 @@ class MetricsHandler {
         });
         stream.end();
     }
-    remove(key, callback) {
+    remove(key, tsp, callback) {
         const stream = this.db.createReadStream();
         stream.on('error', (err) => callback(err));
         stream.on('end', () => callback(null));
         stream.on('data', (data) => {
             const [, k, timestamp] = data.key.split(":");
-            if (key === k)
+            if ((key === k) && (tsp === timestamp))
                 this.db.del(data.key);
         });
     }
