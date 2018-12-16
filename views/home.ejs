@@ -2,20 +2,20 @@
 
 <html>
     <head>
-        <title>Projet Node</title>
+        <title>Accueil</title>
         <link rel="stylesheet" href="/semantic/semantic.min.css">
         <style>
             .main.container{
                 margin-top: 10em;
             }
         </style>
+        <script src="/js/jquery-3.3.1.min.js"></script>
     </head>
     <body>
          <div class="ui fixed inverted menu">
              <a href="/" class="header item">Bonjour <%= name %></a>
              <button class="ui orange button" href="/logout" onClick='document.location.href="/logout"' type="submit">Déconnexion</button>
          </div>
-
 
 <div class="ui main container">
   <% if(locals.success){ %>
@@ -24,20 +24,30 @@
      </div>
      <% } %>
 
-   <button class="ui teal button" id="show-metrics">Afficher les metrics</button>
+   <button class="ui teal button" id="show-metrics" >Afficher les metrics</button>
    <button class="small ui button" href="metrics/add" onClick='document.location.href="metrics/add"'>Ajouter metrics</button>
+   <hr/>
 
    <div id="metrics"></div>
 
 </div>
 </body>
 
+
+
 <script>
   $('#show-metrics').click((e) => {
+    console.log('click')
     e.preventDefault()
     $.getJSON('/metrics.json', {}, (data) => {
       const content = data.map(d => {
-        return `<p>timestamp: ${d.timestamp}, value: ${d.value}</p>`
+        return `
+        <div class="ui blue message">
+          <a onClick='document.location.href="metrics/delete/${d.timestamp}"'><i class="close icon"></i></a>
+            <p>
+                  Timestamp: ${d.timestamp}, Value: ${d.value}
+            </p>
+        </div>`
       })
       $("#metrics").append(content.join("\n"))
     })

@@ -121,7 +121,7 @@ app.use('/user', userRouter)
 const metricsRouter = express.Router()
 
 metricsRouter.post('/', (req: any, res: any, next: any) => {
-  const met = [new Metric(`${new Date(req.body.timestamp)}`, req.body.value)]
+  const met = [new Metric(`${new Date(req.body.timestamp).getTime()}`, req.body.value)]
   dbMet.save(req.session.user.username, met, (err: Error | null) => {
     if (err) next(err)
     res.status(200).send()
@@ -153,13 +153,33 @@ metricsRouter.get('/:id', (req: any, res: any) => {
 			  res.send('Aucun résultat')
 			  res.end()
 	  	}
-     else res.json(result)
-     })
-    }
+     else {
+       res.json(result)
+     }
+   })
+  }
   else res.send("Vous n'avez pas accès à ces metrics")
 })
 
-app.use('/metrics', metricsRouter)
+const display = function (req: any, res: any, next: any) {
+  if (req.session.loggedIn) {
+    next()
+  } else res.redirect('/login')
+}
+
+
+
+app.use('/metrics', authCheck, metricsRouter)
+
+//Script de home.ejs
+app.get('/metrics.json', (req: any, res: any, next: any) => {
+  dbMet.get(req.session.user.username, (err: Error | null, result?: Metric[]) => {
+    if (err) next(err)
+    if (result === undefined) {
+      res.send('Désolé, aucun résultat...')
+    } else res.json(result)
+  })
+})
 
 app.listen(4000, (err: Error) => {
 	if (err) throw err

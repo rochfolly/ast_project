@@ -22,12 +22,16 @@
     "level-ws": "^1.0.0",
     "leveldown": "^4.0.1",
     "levelup": "^3.1.1",
-    "morgan": "^1.9.1"
+    "mocha": "^5.2.0",
+    "morgan": "^1.9.1",
+    "should": "^13.2.3"
   },
   "devDependencies": {
     "@types/express": "^4.16.0",
     "@types/levelup": "^3.1.0",
+    "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.14",
+    "@types/should": "^13.0.0",
     "concurrently": "^4.1.0",
     "nodemon": "^1.18.8",
     "ts-node": "^7.0.1",
