@@ -45,10 +45,12 @@ authRouter.post('/login', (req, res, next) => {
             next(err);
         if (result === undefined || !result.validatePassword(req.body.password)) {
             res.redirect('/login');
+            console.log('Aucun compte à ce nom');
         }
         else {
             req.session.loggedIn = true;
             req.session.user = result;
+            console.log('else error');
             res.redirect('/');
         }
     });
@@ -62,7 +64,7 @@ const authCheck = function (req, res, next) {
         res.redirect('/login');
 };
 app.get('/', authCheck, (req, res) => {
-    res.render('home', { name: req.session.username });
+    res.render('home', { name: req.session.user.username });
 });
 //USERS
 const userRouter = express.Router();
@@ -72,11 +74,14 @@ userRouter.post('/', (req, res, next) => {
             res.status(409).send("user already exists");
         }
         else {
-            dbUser.save(req.body, function (err) {
+            const newuser = new users_1.User(req.body.username, req.body.email, req.body.password);
+            dbUser.save(newuser, function (err) {
                 if (err)
                     next(err);
-                else
+                else {
                     res.status(201).send("user added successfully");
+                    console.log('User ' + req.body.username + ' ajouté');
+                }
             });
         }
     });

@@ -41,7 +41,7 @@ class UserHandler {
         });
     }
     save(user, callback) {
-        this.db.put(`user:${user.username}`, `${user.getPassword}:${user.email}`, (err) => {
+        this.db.put(`user:${user.username}`, `${user.getPassword()}:${user.email}`, (err) => {
             callback(err);
         });
     }

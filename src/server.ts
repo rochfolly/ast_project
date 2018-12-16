@@ -63,7 +63,7 @@ authRouter.post('/login', (req: any, res: any, next: any) => {
       else {
         req.session.loggedIn = true
         req.session.user = result
-        console.log('else error')
+        console.log('Connexion réussie')
         res.redirect('/')
       }
     })
@@ -78,7 +78,7 @@ const authCheck = function (req: any, res: any, next: any) {
 }
 
 app.get('/', authCheck, (req: any, res: any) => {
-  res.render('home', { name: req.session.username })
+  res.render('home', { name: req.session.user.username })
 })
 
 
@@ -94,11 +94,12 @@ userRouter.post('/', (req: any, res: any, next: any) => {
       if (!err || result !== undefined) {
        res.status(409).send("user already exists")
       } else {
-        dbUser.save(req.body, function (err: Error | null) {
+        const newuser = new User(req.body.username, req.body.email, req.body.password)
+        dbUser.save(newuser, function (err: Error | null) {
           if (err) next(err)
           else {
             res.status(201).send("user added successfully")
-            console.log('User ajouté')
+            console.log('User ' +req.body.username+ ' ajouté')
           }
         })
       }
