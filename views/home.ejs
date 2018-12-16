@@ -12,13 +12,14 @@
     </head>
     <body>
          <div class="ui fixed inverted menu">
-             <a href="/" class="header item">Bienvenue</a>
+             <a href="/" class="header item">Projet Node.js</a>
+             <button class="ui orange button" href="/logout" onClick='document.location.href="/logout"' type="submit">Déconnexion</button>
          </div>
 
 
 <div class="ui main container">
-  <% if(locals.error){ %>
-     <div class="ui negative message">
-                <%= error %>
-     </div>
-     <% } %>
+ Bonjour <%= name >
+</div>
+</body>
+
+</html>

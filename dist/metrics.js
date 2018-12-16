@@ -20,6 +20,9 @@ class MetricsHandler {
         const stream = this.db.createReadStream();
         var met = [];
         stream.on('error', callback);
+        stream.on('end', (err) => {
+            callback(null, met);
+        });
         stream.on('data', (data) => {
             const [_, k, timestamp] = data.key.split(":");
             const value = data.value;
@@ -39,6 +42,16 @@ class MetricsHandler {
             stream.write({ key: `metric:${key}${m.timestamp}`, value: m.value });
         });
         stream.end();
+    }
+    remove(key, callback) {
+        const stream = this.db.createReadStream();
+        stream.on('error', (err) => callback(err));
+        stream.on('end', () => callback(null));
+        stream.on('data', (data) => {
+            const [, k, timestamp] = data.key.split(":");
+            if (key === k)
+                this.db.del(data.key);
+        });
     }
 }
 exports.MetricsHandler = MetricsHandler;

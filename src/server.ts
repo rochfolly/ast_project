@@ -1,12 +1,7 @@
 import express = require('express');
-import bodyparser = require('body-parser')
-import morgan = require('morgan')
-import session = require('express-session')
-import levelSession = require('level-session-store')
-
 const app = express();
 const authRouter = express.Router()
-const LevelStore = levelSession(session)
+
 
 
 import { MetricsHandler, Metric } from './metrics'
@@ -23,10 +18,16 @@ app.set('views', __dirname + '/../views')
 app.use(express.static('public'))
 
 //Clarification des requêtes
+import bodyparser = require('body-parser')
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({ extended: true }))
 
 //Sessions et Logging
+import morgan = require('morgan')
+import session = require('express-session')
+import levelSession = require('level-session-store')
+const LevelStore = levelSession(session)
+
 app.use(morgan('dev'))
 
 app.use(session({
@@ -52,10 +53,68 @@ authRouter.get('/logout', (req: any, res: any) => {
   res.redirect('/login')
 })
 
+authRouter.post('/login', (req: any, res: any, next: any) => {
+    dbUser.get(req.body.username, (err: Error | null, result?: User) => {
+      if (err) next(err)
+      if (result === undefined || !result.validatePassword(req.body.password)) {
+        res.redirect('/login')
+        console.log('Aucun compte à ce nom')
+      }
+      else {
+        req.session.loggedIn = true
+        req.session.user = result
+        console.log('else error')
+        res.redirect('/')
+      }
+    })
+  })
 
-app.get('/', (req: any, res: any) => {
-	res.render('login')
+app.use(authRouter)
+
+const authCheck = function (req: any, res: any, next: any) {
+  if (req.session.loggedIn) {
+    next()
+  } else res.redirect('/login')
+}
+
+app.get('/', authCheck, (req: any, res: any) => {
+  res.render('home', { name: req.session.username })
 })
+
+
+
+
+
+//USERS
+
+const userRouter = express.Router()
+
+userRouter.post('/', (req: any, res: any, next: any) => {
+    dbUser.get(req.body.username, function (err: Error | null, result?: User) {
+      if (!err || result !== undefined) {
+       res.status(409).send("user already exists")
+      } else {
+        dbUser.save(req.body, function (err: Error | null) {
+          if (err) next(err)
+          else {
+            res.status(201).send("user added successfully")
+            console.log('User ajouté')
+          }
+        })
+      }
+    })
+   })
+
+userRouter.get('/:username', (req: any, res: any, next: any) => {
+     dbUser.get(req.params.username, function (err: Error | null, result?: User) {
+      if (err || result === undefined) {
+        res.status(404).send("user not found")
+      } else res.status(200).json(result)
+    })
+   })
+
+app.use('/user', userRouter)
+
 
 app.get('/metrics/:id', (req: any, res: any) => {
   dbMet.get(req.params.id, (err: Error | null, result?: any) => {

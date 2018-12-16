@@ -1,6 +1,6 @@
 <% include header %>
 
-<form action="/" method="POST" class="ui form">
+<form action="/login" method="POST" class="ui form">
         <div class="field">
             <label for="username">Nom d'utilisateur</label>
             <input type="text" name="username"/>
@@ -9,8 +9,10 @@
             <label for="password">Mot de passe</label>
             <input type="password" name="password"/>
         </div>
-        <button type="submit">Connexion</button>
+        <button class="ui inverted green button" type="submit">Connexion</button>
     </form>
+    <hr/>
+    <button class="ui blue button" href="/signup" onClick='document.location.href="/signup"'>Créer un compte</button>
   </div>
 </body>
 
