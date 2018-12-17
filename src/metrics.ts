@@ -12,7 +12,7 @@ export class Metric {
 }
 
 export class MetricsHandler {
-  private db: any
+  public db: any
 
   constructor(dbPath: string) {
     this.db = LevelDb.open(dbPath)
@@ -31,7 +31,7 @@ export class MetricsHandler {
       const value = data.value
 
       if (key !== k) {
-       console.log(`LevelDB error: ${data} does not match key ${key}`)
+       console.log(`LevelDb error: ${data} does not match key ${key}`)
       } else {
      met.push(new Metric(timestamp, value))
      }

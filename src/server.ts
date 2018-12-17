@@ -97,8 +97,8 @@ userRouter.post('/', (req: any, res: any, next: any) => {
         dbUser.save(newuser, function (err: Error | null) {
           if (err) next(err)
           else {
-            res.status(201).send("user added successfully")
             console.log('User ' +req.body.username+ ' ajouté')
+            res.status(201).redirect("/")
           }
         })
       }

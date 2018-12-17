@@ -138,6 +138,7 @@ metricsRouter.get('/:id', (req, res) => {
         res.send("Vous n'avez pas accès à ces metrics");
 });
 metricsRouter.get('delete/:timestamp', (req, res) => {
+    console.log('Suppression');
     dbMet.remove(req.session.user.username, req.params.timestamp, (err) => {
         if (err)
             throw err;

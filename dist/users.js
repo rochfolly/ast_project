@@ -14,7 +14,7 @@ class User {
     }
     static fromDb(username, value) {
         const [password, email] = value.split(":");
-        return new User(username, email, password, true);
+        return new User(username, email, password, false);
     }
     setPassword(toSet) {
         // Hash and set password
