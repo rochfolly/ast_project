@@ -7,7 +7,8 @@
     "build": "./node_modules/.bin/tsc -p tsconfig.json",
     "test": "npm test",
     "start": "./node_modules/.bin/ts-node src/server.ts",
-    "dev": "./node_modules/.bin/nodemon "
+    "dev": "./node_modules/.bin/nodemon ",
+    "populate": "./node_modules/.bin/ts-node bin/populate.ts"
   },
   "author": "roch folly",
   "license": "ISC",
