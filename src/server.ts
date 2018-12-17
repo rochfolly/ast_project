@@ -183,7 +183,7 @@ app.get('/metrics.json', (req: any, res: any, next: any) => {
   })
 })
 
-app.listen(4000, (err: Error) => {
+app.listen(8080, (err: Error) => {
 	if (err) throw err
-	console.log("Le projet est disponible à l'adresse suivante : http://localhost:4000/")
+	console.log("Le projet est disponible à l'adresse suivante : http://localhost:8080")
 })
